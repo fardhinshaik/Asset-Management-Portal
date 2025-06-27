@@ -1,162 +1,124 @@
+
 # Asset Management Portal
 
-## Problem Statement
+## 1. INTRODUCTION
 
-The **Asset Management Portal** is designed to streamline the tracking, management, and allocation of both physical and digital assets within an organization using ServiceNow. Employees can request and receive assets through a user-friendly portal, while administrators manage the asset lifecycle from procurement to disposal. The portal automates assignment, maintains accurate records, generates reports, and triggers alerts for maintenance or replacement, ensuring optimal asset performance and reduced downtime.
+### 1.1 Project Overview
+The Asset Management Portal is developed on the ServiceNow platform to automate and streamline the tracking, management, and lifecycle of organizational assets. It empowers both employees and administrators by enabling requests, assignments, maintenance tracking, and reports in a centralized system.
 
----
-
-## 📁 Table
-
-Asset data is stored in a custom table to enable proper tracking and reporting.
-
-### 🔸 Create Table
-
-**Steps:**
-1. Open ServiceNow.
-2. Navigate to: `All >> Tables` or `System Definition >> Tables`.
-3. Click **New**.
-4. Fill in:
-   - **Name:** Asset Inventory
-5. Click **Save**.
+### 1.2 Purpose
+The purpose of this project is to minimize manual asset tracking, reduce asset loss, and provide real-time insights and alerts on asset usage, condition, and maintenance requirements.
 
 ---
 
-### 🔸 Create Fields
+## 2. IDEATION PHASE
 
-After saving the table:
-1. Scroll down and create the following fields:
+### 2.1 Problem Statement
+Managing assets manually can lead to inefficiencies, errors, and asset losses. A centralized portal improves visibility, automates workflows, and ensures effective asset utilization and control.
 
-| Field Name       | Type   |
-|------------------|--------|
-| Assigned to      | String |
-| Status           | Choice |
-| Purchase date    | Date   |
-| Warranty Expire  | Date   |
-| Asset name       | String |
-| Type             | Choice |
-| Number           | String |
+### 2.2 Empathy Map Canvas
+Stakeholders like IT admins, employees, and procurement officers were considered. We identified their needs such as ease of request, quick asset assignment, timely maintenance, and accurate reporting.
 
-2. Click **Save**.
+### 2.3 Brainstorming
+Ideas included automated status change, repair tracking, assignment logs, scheduled alerts, and graphical reporting—all consolidated within ServiceNow.
 
 ---
 
-## 🧩 Create UI Actions
+## 3. REQUIREMENT ANALYSIS
 
-### 🔸 UI Action 1: Mark As Lost
+### 3.1 Customer Journey Map
+- **Request Asset** → **Approval** → **Assignment** → **Use** → **Maintenance** → **Disposal**
 
-**Navigation:** System Definition >> UI Actions  
-**Configuration:**
-- **Name:** Mark As Lost
-- **Table:** Asset Inventory
-- **Action name:** mark_as_lost
-- **Condition:** `current.u_status != 'Lost'`
-- **Script:**
-  ```javascript
-  current.u_status = 'Lost';
-  current.update();
-  action.setRedirectURL(current);
-  ```
-- Check the **Form button** option and click **Save**.
+### 3.2 Solution Requirement
+- Create Asset Inventory Table
+- UI Actions for changing asset status
+- Scheduled Job for alerting warranty expiry
+- Graphical Reports on asset usage
 
----
+### 3.3 Data Flow Diagram
+```
+[User] --> [Asset Request Form]
+          --> [Asset Inventory Table]
+          --> [Assignment/Status Update]
+          --> [Reports | Alerts | Notifications]
+```
 
-### 🔸 UI Action 2: Mark As Repaired
-
-**Navigation:** System Definition >> UI Actions  
-**Configuration:**
-- **Name:** Mark As Repaired
-- **Table:** Asset Inventory
-- **Action name:** mark_as_repaired
-- **Condition:** `current.u_status == 'Damaged' || current.u_status == 'Lost'`
-- **Script:**
-  ```javascript
-  current.u_status = 'Available';
-  current.update();
-  action.setRedirectURL(current);
-  ```
-- Check the **Form button** option and click **Save**.
+### 3.4 Technology Stack
+- **Platform:** ServiceNow
+- **Scripting:** GlideScript (JavaScript)
+- **Visualization:** ServiceNow Reports
+- **Scheduling:** ServiceNow Scheduled Jobs
 
 ---
 
-### 🔸 UI Action 3: Mark As Damaged
+## 4. PROJECT DESIGN
 
-**Navigation:** System Definition >> UI Actions  
-**Configuration:**
-- **Name:** Mark As Damaged
-- **Table:** Asset Inventory
-- **Action name:** mark_as_damaged
-- **Condition:** `current.u_status != 'Damaged'`
-- **Script:**
-  ```javascript
-  current.u_status = 'Damaged';
-  current.update();
-  action.setRedirectURL(current);
-  ```
-- Check the **Form button** option and click **Save**.
+### 4.1 Problem-Solution Fit
+Employees can easily request assets, and admins manage the full asset lifecycle in a simplified and automated manner.
+
+### 4.2 Proposed Solution
+Use ServiceNow tables, UI actions, and scheduled jobs to provide a centralized asset management platform.
+
+### 4.3 Solution Architecture
+- **Front-end:** Forms and UI Actions
+- **Back-end:** Tables, Business Rules, Scheduled Jobs
+- **Reports:** Pie Chart on asset status
 
 ---
 
-## 🕒 Scheduled Job
+## 5. PROJECT PLANNING & SCHEDULING
 
-### 🔸 Create Scheduled Job
-
-**Navigation:** System Definition >> Scheduled Job  
-**Configuration:**
-- **Name:** Warranty Expiry Alert
-- **Run:** Daily
-- **Time:** 12:00 PM
-- **Script:** *(custom script to trigger alerts before warranty expires)*
-- Click **Save**.
-
----
-
-## 📊 Report
-
-### 🔸 Create Report
-
-**Navigation:** Reports >> Create New  
-**Configuration:**
-- **Report Name:** Available vs Assigned Assets
-- **Source Type:** Table
-- **Table:** Asset Inventory
-- **Type:** Pie Chart
-- **Group By:** Status
-- **Aggregation:** Count
-
-Click **Save**, then **Run** to view the report.
+### 5.1 Project Planning
+| Module              | Duration |
+|---------------------|----------|
+| Create Table        | 1 hour   |
+| UI Actions          | 1.5 hour |
+| Scheduled Job       | 1 hour   |
+| Report Generation   | 30 mins  |
+| Testing & Debugging | 1 hour   |
 
 ---
 
-## ✅ Testing
+## 6. FUNCTIONAL AND PERFORMANCE TESTING
 
-### 🔸 Testing UI Action
-
-**Steps:**
-1. Go to the Asset Inventory table.
-2. Click **New** and fill in:
-   - Asset name: Laptop
-   - Type: Laptop
-   - Assigned to: Abel Tutor
-   - Status: Available
-   - Choose Purchase and Warranty Expiry dates
-3. Click **Submit**.
-4. Reopen the record and click **Mark As Lost**.
-5. Confirm the status changes to **Lost**.
+### 6.1 Performance Testing
+- Tested with large data records.
+- Confirmed the accuracy of status change under UI actions.
+- Verified execution timing of scheduled jobs.
 
 ---
 
-### 🔸 Testing Scheduled Job
+## 7. RESULTS
 
-**Steps:**
-1. Navigate to **System Definition >> Background Scripts**.
-2. Paste the script used in the Scheduled Job.
-3. Click **Run Script**.
-4. Check logs or notifications to confirm job execution.
+### 7.1 Output Screenshots
+- Table: Asset Inventory
+- Fields: Assigned to, Type, Status, etc.
+- UI Actions: Mark as Lost, Damaged, Repaired
+- Report: Pie chart of Available vs Assigned
+- Scheduled Alert: Warranty Expiry
 
 ---
 
-## 🔚 Conclusion
+## 8. ADVANTAGES & DISADVANTAGES
 
-This ServiceNow-based Asset Management Portal simplifies asset lifecycle management by automating workflows, enhancing visibility, and supporting timely decisions. It ensures effective tracking, reduces asset loss, and boosts organizational efficiency.
+### ✅ Advantages
+- Automated lifecycle tracking
+- Real-time visibility into assets
+- Reduced manual errors
+- Scheduled maintenance alerts
 
+### ⚠️ Disadvantages
+- Requires ServiceNow access
+- Custom scripting complexity for beginners
+
+---
+
+## 9. CONCLUSION
+The Asset Management Portal helps track and manage assets efficiently within ServiceNow. It reduces overhead, improves tracking, and enables quick decision-making through automation and reporting.
+
+---
+
+## 10. FUTURE SCOPE
+- Integration with procurement systems
+- Mobile-friendly asset request interface
+- Advanced analytics on asset lifespan and usage
